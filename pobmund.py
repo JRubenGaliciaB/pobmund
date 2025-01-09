@@ -10,25 +10,21 @@ st.set_page_config(page_title="Población Mundial", layout="wide")
 @st.cache
 def cargar_datos():
     np.random.seed(42)
-    paises = [
-        "México", "Estados Unidos", "China", "India", "Brasil", "Nigeria", 
-        "Rusia", "Japón", "Alemania", "Sudáfrica"
-    ]
-    latitudes = [23.6345, 37.0902, 35.8617, 20.5937, -14.2350, 9.0820, 61.5240, 36.2048, 51.1657, -30.5595]
-    longitudes = [-102.5528, -95.7129, 104.1954, 78.9629, -51.9253, 8.6753, 105.3188, 138.2529, 10.4515, 22.9375]
+    num_registros = 5000  # Ampliar el número de registros para una mejor cobertura
 
-    data = []
-    for i, pais in enumerate(paises):
-        for _ in range(100):  # 100 personas por país
-            data.append({
-                "country": pais,
-                "latitude": latitudes[i] + np.random.uniform(-0.5, 0.5),
-                "longitude": longitudes[i] + np.random.uniform(-0.5, 0.5),
-                "sexo": np.random.choice(["Masculino", "Femenino"]),
-                "edad": np.random.randint(0, 100),
-                "nivel_socioeconomico": np.random.choice(["Bajo", "Medio", "Alto"], p=[0.5, 0.3, 0.2]),
-                "poblacion": np.random.randint(1000, 10000),
-            })
+    data = {
+        "latitude": np.random.uniform(-90, 90, num_registros),  # Distribución global
+        "longitude": np.random.uniform(-180, 180, num_registros),
+        "sexo": np.random.choice(["Masculino", "Femenino"], num_registros),
+        "edad": np.random.randint(0, 100, num_registros),
+        "nivel_socioeconomico": np.random.choice(["Bajo", "Medio", "Alto"], num_registros, p=[0.5, 0.3, 0.2]),
+        "poblacion": np.random.randint(1000, 10000, num_registros),
+        "country": np.random.choice(
+            ["México", "Estados Unidos", "China", "India", "Brasil", "Nigeria", "Rusia", "Japón", "Alemania", "Sudáfrica"],
+            num_registros
+        )
+    }
+
     return pd.DataFrame(data)
 
 # Cargar los datos simulados
@@ -69,14 +65,14 @@ layer = pdk.Layer(
     datos_filtrados,
     get_position=["longitude", "latitude"],
     get_fill_color=["color", "255 - color", "128"],  # Gradiente RGB
-    get_radius=50000,
+    get_radius=200000,  # Aumentar el radio para mejorar la visibilidad
     pickable=True,
 )
 
 view_state = pdk.ViewState(
     latitude=20,
     longitude=0,
-    zoom=1.5,
+    zoom=1,
     pitch=0,
 )
 
