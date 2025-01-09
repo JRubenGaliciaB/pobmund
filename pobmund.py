@@ -10,7 +10,7 @@ st.set_page_config(page_title="Población Mundial", layout="wide")
 @st.cache
 def cargar_datos():
     np.random.seed(42)
-    num_registros = 5000  # Ampliar el número de registros para una mejor cobertura
+    num_registros = 5000  # Aumentar el número de registros para mayor cobertura
 
     data = {
         "latitude": np.random.uniform(-90, 90, num_registros),  # Distribución global
@@ -49,22 +49,22 @@ datos_filtrados = datos[
     (datos["nivel_socioeconomico"].isin(nivel_socioeconomico_filtro))
 ]
 
-# Configurar colores como un gradiente basado en la edad
-max_edad = datos["edad"].max()
-min_edad = datos["edad"].min()
+# Configurar colores como un gradiente basado en la población
+max_poblacion = datos["poblacion"].max()
+min_poblacion = datos["poblacion"].min()
 
-# Normalizar edades a un rango de 0-255 para el gradiente
-datos_filtrados["color"] = datos_filtrados["edad"].apply(
-    lambda x: int((x - min_edad) / (max_edad - min_edad) * 255)
+# Normalizar población a un rango de 0-255 para el gradiente
+datos_filtrados["color"] = datos_filtrados["poblacion"].apply(
+    lambda x: int((x - min_poblacion) / (max_poblacion - min_poblacion) * 255)
 )
 
 # Mapa interactivo con gradiente
-st.subheader("Mapa Interactivo de la Población Mundial (Gradiente por Edad)")
+st.subheader("Mapa Interactivo de la Población Mundial (Gradiente por Densidad de Población)")
 layer = pdk.Layer(
     "ScatterplotLayer",
     datos_filtrados,
     get_position=["longitude", "latitude"],
-    get_fill_color=["color", "255 - color", "128"],  # Gradiente RGB
+    get_fill_color=["color", "0", "255 - color", "200"],  # Gradiente RGB (rojo -> azul)
     get_radius=200000,  # Aumentar el radio para mejorar la visibilidad
     pickable=True,
 )
@@ -95,3 +95,4 @@ st.dataframe(datos_filtrados)
 # Mostrar estadísticas resumidas
 st.subheader("Estadísticas Resumidas")
 st.write(datos_filtrados.describe())
+
