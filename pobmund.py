@@ -53,18 +53,23 @@ datos_filtrados = datos[
     (datos["nivel_socioeconomico"].isin(nivel_socioeconomico_filtro))
 ]
 
-# Mapa interactivo
-st.subheader("Mapa Interactivo de la Población Mundial")
+# Configurar colores como un gradiente basado en la edad
+max_edad = datos["edad"].max()
+min_edad = datos["edad"].min()
+
+# Normalizar edades a un rango de 0-255 para el gradiente
+datos_filtrados["color"] = datos_filtrados["edad"].apply(
+    lambda x: int((x - min_edad) / (max_edad - min_edad) * 255)
+)
+
+# Mapa interactivo con gradiente
+st.subheader("Mapa Interactivo de la Población Mundial (Gradiente por Edad)")
 layer = pdk.Layer(
     "ScatterplotLayer",
     datos_filtrados,
     get_position=["longitude", "latitude"],
-    get_fill_color=[
-        "255 * (sexo == 'Femenino')",  # Rojo para Femenino
-        "255 * (sexo == 'Masculino')",  # Azul para Masculino
-        "100 * (nivel_socioeconomico == 'Alto')",  # Intensidad para nivel socioeconómico
-    ],
-    get_radius=10000,
+    get_fill_color=["color", "255 - color", "128"],  # Gradiente RGB
+    get_radius=50000,
     pickable=True,
 )
 
