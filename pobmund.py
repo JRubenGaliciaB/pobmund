@@ -1,11 +1,11 @@
 import streamlit as st
 from streamlit_globe import streamlit_globe
+import pandas as pd
 
 # Configuración de la página
 st.set_page_config(page_title="Mapa de Población Mundial", layout="wide")
 
 # Datos simulados: Población por país
-# Para un uso real, reemplaza esto con datos oficiales
 poblacion_paises = {
     "México": {"lat": 23.6345, "lng": -102.5528, "poblacion": 126014024},
     "Estados Unidos": {"lat": 37.0902, "lng": -95.7129, "poblacion": 331893745},
@@ -21,10 +21,6 @@ poblacion_paises = {
 
 # Definir colores basados en la población
 def calcular_color(poblacion):
-    """
-    Asigna un color basado en la población. 
-    Poblaciones más altas se representan con colores más cálidos.
-    """
     if poblacion > 1_000_000_000:
         return "red"
     elif poblacion > 500_000_000:
@@ -41,7 +37,7 @@ points_data = [
     {
         "lat": datos["lat"],
         "lng": datos["lng"],
-        "size": 0.5,  # Tamaño constante para todos los puntos
+        "size": 0.5,
         "color": calcular_color(datos["poblacion"]),
     }
     for datos in poblacion_paises.values()
